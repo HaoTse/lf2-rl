@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# lf2 environment
+lf2gym/*
+
+# pylint setup
+.pylintrc
+
+# vscode setup
+.vscode/*
