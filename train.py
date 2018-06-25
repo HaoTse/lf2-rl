@@ -14,7 +14,7 @@ import lf2gym
 def newReward(obsesrvation, obsesrvation_):
     return abs(obsesrvation_[0] - (-0.5))
 
-def transOber(observation):
+def transObser(observation):
     observation = np.transpose(observation, (2, 1, 0))
     observation = np.transpose(observation, (0, 2, 1))
     return observation
@@ -24,7 +24,7 @@ def update(method):
     for episode in range(TRAIN_EPISODE_NUM):
         # initial
         observation = env.reset(options)
-        observation = transOber(observation)
+        observation = transObser(observation)
 
         iter_cnt, total_reward = 0, 0
         while True:
@@ -38,7 +38,7 @@ def update(method):
                 action = RL.choose_action(observation)
                 # RL take action and get next observation and reward
                 observation_, reward, done, _ = env.step(action)
-                observation_ = transOber(observation_)
+                observation_ = transObser(observation_)
                 # reward = newReward(observation, observation_)
                 # RL learn from this transition
                 RL.store_transition(observation, action, reward, observation_)
