@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 
 from config import MEMORY_CAPACITY, TRAIN_EPISODE_NUM, BATCH_SIZE, E_GREEDY, MAX_STEP
-from brain import DQN
+from fbrain import DQN
 
 # Add import path and import the lf2gym
 import os, sys
@@ -23,8 +23,9 @@ def update(method):
     records = []
     for episode in range(TRAIN_EPISODE_NUM):
         # initial
-        observation = env.reset(options)
-        observation = transObser(observation)
+        observation, characters_info = env.reset(options)
+        # observation = transObser(observation)
+        observation = characters_info
 
         iter_cnt, total_reward = 0, 0
         while True:
@@ -37,8 +38,8 @@ def update(method):
                 # RL choose action based on observation
                 action = RL.choose_action(observation)
                 # RL take action and get next observation and reward
-                observation_, reward, done, _ = env.step(action)
-                observation_ = transObser(observation_)
+                observation_, reward, done, _, characters_info = env.step(action)
+                observation_ = characters_info
                 # reward = newReward(observation, observation_)
                 # RL learn from this transition
                 RL.store_transition(observation, action, reward, observation_)
@@ -91,9 +92,9 @@ if __name__ == "__main__":
     OPPOENENT = 'Dennis'
 
     # env setup
-    env = lf2gym.make(startServer=True, wrap='skip4', driverType=lf2gym.WebDriver.PhantomJS, 
-        characters=[lf2gym.Character[AGENT], lf2gym.Character[OPPOENENT]], 
-        difficulty=lf2gym.Difficulty.Dumbass, debug=True)
+    env = lf2gym.make(startServer=True, wrap='skip4', driverType=lf2gym.WebDriver.Chrome, 
+        characters=[lf2gym.Character[AGENT], lf2gym.Character[OPPOENENT]], rewardList=['hp', 'mp'],
+        difficulty=lf2gym.Difficulty.Crusher, debug=True)
     
     options = env.get_reset_options()
     print('Original reset options: %s' % options)
@@ -107,13 +108,13 @@ if __name__ == "__main__":
         print("Use DQN...")
         print('--------------------------------')
         env_shape = 0 if isinstance(env.action_space.sample(), int) else env.action_space.sample().shape  # to confirm the shape
-        RL = DQN(action_n=env.action_space.n, state_n=env.observation_space.n, env_shape=env_shape,
+        RL = DQN(action_n=env.action_space.n, state_n=28, env_shape=env_shape,
                 learning_rate=args.learning_rate, reward_decay=args.reward_decay)
     else:
         print("Error method! Use DQN instead.")
         print('--------------------------------')
         env_shape = 0 if isinstance(env.action_space.sample(), int) else env.action_space.sample().shape  # to confirm the shape
-        RL = DQN(action_n=env.action_space.n, state_n=env.observation_space.n, env_shape=env_shape,
+        RL = DQN(action_n=env.action_space.n, state_n=28, env_shape=env_shape,
                 learning_rate=args.learning_rate, reward_decay=args.reward_decay)
 
     update(method)
