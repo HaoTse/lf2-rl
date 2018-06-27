@@ -3,7 +3,6 @@ import numpy as np
 import argparse
 
 from config import MEMORY_CAPACITY, TEST_EPISODE_NUM, BATCH_SIZE, E_GREEDY, MAX_STEP
-from brain import DQN
 
 # Add import path and import the lf2gym
 import os, sys
@@ -14,20 +13,23 @@ import lf2gym
 def newReward(obsesrvation, obsesrvation_):
     return abs(obsesrvation_[0] - (-0.5))
 
-def transOber(observation):
-    observation = np.transpose(observation, (2, 1, 0))
-    observation = np.transpose(observation, (0, 2, 1))
+def transObser(observation, feature, mode):
+    if mode == 'picture':
+        observation = np.transpose(observation, (2, 1, 0))
+        observation = np.transpose(observation, (0, 2, 1))
+    elif mode == 'feature':
+        observation = feature
     return observation
 
-def test(mothod, model_path):
+def test(mothod, mode, model_path):
     #load model
     RL.load_model(model_path)
 
     steps, rewards = [], []
     for episode in range(TEST_EPISODE_NUM):
         # initial
-        observation = env.reset()
-        observation = transOber(observation)
+        observation, characters_info = env.reset()
+        observation = transObser(observation, characters_info, mode)
 
         iter_cnt, total_reward = 0, 0
         while True:
@@ -36,12 +38,12 @@ def test(mothod, model_path):
             # fresh env
             env.render()
 
-            if method == 'DQN':
+            if algorithm == 'DQN':
                 # RL choose action based on observation
                 action = RL.choose_action(observation)
                 # RL take action and get next observation and reward
                 observation_, reward, done, _ = env.step(action)
-                observation_ = transOber(observation_)
+                observation_ = transObser(observation_, characters_info, mode)
                 # reward = newReward(observation, observation_)
 
             # accumulate reward
@@ -66,20 +68,32 @@ if __name__ == "__main__":
 
     # argument
     parse = argparse.ArgumentParser()
-    parse.add_argument('-m', '--method',
+    parse.add_argument('-m', '--mode',
+                        default='picture',
+                        help='Choose input for network (picture, feature)')
+    parse.add_argument('-alog', '--algorithm',
                         default='DQN',
                         help='Choose which rl algorithm used (DQN)')
     parse.add_argument('-t', '--test',
-                        default='model/DQN/eval_0.01_{}_{}.pkl'.format(E_GREEDY, BATCH_SIZE),
+                        default='model/DQN/picture_eval_0.01_{}_{}.pkl'.format(E_GREEDY, BATCH_SIZE),
                         help='The test model path')
     args = parse.parse_args()
-
+    
+    # import network model
+    if args.mode == 'picture':
+        from brain.pbrain import DQN
+    elif args.mode == 'feature':
+        from brain.fbrain import DQN
+    else:
+        print("Error mode! Use picture instead.")
+        from brain.pbrain import DQN
+    
     # game setup
     AGENT = 'Davis'
     OPPOENENT = 'Dennis'
 
     # env setup
-    env = lf2gym.make(startServer=True, wrap='skip4', driverType=lf2gym.WebDriver.Chrome, 
+    env = lf2gym.make(startServer=True, wrap='skip4', driverType=lf2gym.WebDriver.PhantomJS, 
         characters=[lf2gym.Character[AGENT], lf2gym.Character[OPPOENENT]], 
         difficulty=lf2gym.Difficulty.Crusher, debug=True)
     
@@ -89,17 +103,28 @@ if __name__ == "__main__":
     options['mp_start'] = 250
     print('Custom reset options: %s' % options)
 
+    # initial obervation number
+    mode = args.mode
+    if mode == 'picture':
+        state_n = env.observation_space.n
+    elif mode == 'feature':
+        state_n = 28
+    else:
+        state_n = env.observation_space.n
+        mode = 'picture'
+
     # algorithm setup
-    method = args.method
-    if method == 'DQN':
+    algorithm = args.algorithm
+    if algorithm == 'DQN':
         print("Use DQN...")
         print('--------------------------------')
         env_shape = 0 if isinstance(env.action_space.sample(), int) else env.action_space.sample().shape  # to confirm the shape
-        RL = DQN(action_n=env.action_space.n, state_n=env.observation_space.n, env_shape=env_shape)
+        RL = DQN(action_n=env.action_space.n, state_n=state_n, env_shape=env_shape)
     else:
-        print("Error method! Use DQN instead.")
+        print("Error algorithm! Use DQN instead.")
         print('--------------------------------')
         env_shape = 0 if isinstance(env.action_space.sample(), int) else env.action_space.sample().shape  # to confirm the shape
-        RL = DQN(action_n=env.action_space.n, state_n=env.observation_space.n, env_shape=env_shape)
+        RL = DQN(action_n=env.action_space.n, state_n=state_n, env_shape=env_shape)
+        algorithm = 'DQN'
 
-    test(method, args.test)
+    test(algorithm, mode, args.test)
