@@ -106,8 +106,8 @@ if __name__ == "__main__":
 
     # env setup
     env = lf2gym.make(startServer=True, wrap='skip4', driverType=lf2gym.WebDriver.PhantomJS, 
-        characters=[lf2gym.Character[AGENT], lf2gym.Character[OPPOENENT]], rewardList=['hp', 'mp'],
-        difficulty=lf2gym.Difficulty.Crusher, debug=True)
+        characters=[lf2gym.Character[AGENT], lf2gym.Character[OPPOENENT]], debug=True,
+        rewardList=['hp', 'mp'], difficulty=lf2gym.Difficulty.Crusher)
     
     options = env.get_reset_options()
     print('Original reset options: %s' % options)

@@ -42,7 +42,7 @@ def test(mothod, mode, model_path):
                 # RL choose action based on observation
                 action = RL.choose_action(observation)
                 # RL take action and get next observation and reward
-                observation_, reward, done, _ = env.step(action)
+                observation_, reward, done, _, characters_info = env.step(action)
                 observation_ = transObser(observation_, characters_info, mode)
                 # reward = newReward(observation, observation_)
 
