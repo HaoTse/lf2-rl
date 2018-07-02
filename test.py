@@ -19,6 +19,10 @@ def transObser(observation, feature, mode):
         observation = np.transpose(observation, (0, 2, 1))
     elif mode == 'feature':
         observation = feature
+    elif mode == 'mix':
+        observation_ = np.transpose(observation, (2, 1, 0))
+        observation_ = np.transpose(observation_, (0, 2, 1))
+        observation = [observation_, feature]
     return observation
 
 def test(mothod, mode, model_path):
@@ -69,13 +73,13 @@ if __name__ == "__main__":
     # argument
     parse = argparse.ArgumentParser()
     parse.add_argument('-m', '--mode',
-                        default='picture',
-                        help='Choose input for network (picture, feature)')
+                        default='feature',
+                        help='Choose input for network (picture, feature, mix)')
     parse.add_argument('-alog', '--algorithm',
                         default='DQN',
                         help='Choose which rl algorithm used (DQN)')
     parse.add_argument('-t', '--test',
-                        default='model/DQN/picture_eval_0.01_{}_{}.pkl'.format(E_GREEDY, BATCH_SIZE),
+                        default='model/DQN/feature_eval_0.01_{}_{}.pkl'.format(E_GREEDY, BATCH_SIZE),
                         help='The test model path')
     args = parse.parse_args()
     
@@ -84,6 +88,8 @@ if __name__ == "__main__":
         from brain.pbrain import DQN
     elif args.mode == 'feature':
         from brain.fbrain import DQN
+    elif args.mode == 'mix':
+        from brain.mbrain import DQN
     else:
         print("Error mode! Use picture instead.")
         from brain.pbrain import DQN
@@ -109,6 +115,8 @@ if __name__ == "__main__":
         state_n = env.observation_space.n
     elif mode == 'feature':
         state_n = 28
+    elif mode == 'mix':
+        state_n = [env.observation_space.n, 28]
     else:
         state_n = env.observation_space.n
         mode = 'picture'
