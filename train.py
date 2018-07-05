@@ -10,9 +10,6 @@ sys.path.append(os.path.abspath('lf2gym'))
 # Import lf2gym
 import lf2gym
 
-def newReward(obsesrvation, obsesrvation_):
-    return abs(obsesrvation_[0] - (-0.5))
-
 def transObser(observation, feature, mode):
     if mode == 'picture':
         observation = np.transpose(observation, (2, 1, 0))
@@ -37,7 +34,7 @@ def update(algorithm, mode):
             iter_cnt += 1
 
             # fresh env
-            env.render()
+            # env.render()
 
             if algorithm == 'DQN':
                 # RL choose action based on observation
@@ -45,7 +42,6 @@ def update(algorithm, mode):
                 # RL take action and get next observation and reward
                 observation_, reward, done, _, characters_info = env.step(action)
                 observation_ = transObser(observation_, characters_info, mode)
-                # reward = newReward(observation, observation_)
                 # RL learn from this transition
                 RL.store_transition(observation, action, reward, observation_)
                 if RL.memory_counter > MEMORY_CAPACITY:
@@ -107,13 +103,14 @@ if __name__ == "__main__":
         from brain.pbrain import DQN
 
     # game setup
-    AGENT = 'Davis'
+    AGENT = 'Firen'
     OPPOENENT = 'Dennis'
 
     # env setup
     env = lf2gym.make(startServer=True, wrap='skip4', driverType=lf2gym.WebDriver.PhantomJS, 
         characters=[lf2gym.Character[AGENT], lf2gym.Character[OPPOENENT]], debug=True,
-        rewardList=['hp', 'mp'], difficulty=lf2gym.Difficulty.Crusher)
+        difficulty=lf2gym.Difficulty.Crusher,
+        action_options=['Basic', 'AJD'], port=8000)
     
     options = env.get_reset_options()
     print('Original reset options: %s' % options)

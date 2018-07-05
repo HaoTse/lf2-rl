@@ -10,9 +10,6 @@ sys.path.append(os.path.abspath('lf2gym'))
 # Import lf2gym
 import lf2gym
 
-def newReward(obsesrvation, obsesrvation_):
-    return abs(obsesrvation_[0] - (-0.5))
-
 def transObser(observation, feature, mode):
     if mode == 'picture':
         observation = np.transpose(observation, (2, 1, 0))
@@ -48,7 +45,6 @@ def test(mothod, mode, model_path):
                 # RL take action and get next observation and reward
                 observation_, reward, done, _, characters_info = env.step(action)
                 observation_ = transObser(observation_, characters_info, mode)
-                # reward = newReward(observation, observation_)
 
             # accumulate reward
             total_reward += reward
@@ -73,13 +69,13 @@ if __name__ == "__main__":
     # argument
     parse = argparse.ArgumentParser()
     parse.add_argument('-m', '--mode',
-                        default='feature',
+                        default='mix',
                         help='Choose input for network (picture, feature, mix)')
     parse.add_argument('-alog', '--algorithm',
                         default='DQN',
                         help='Choose which rl algorithm used (DQN)')
     parse.add_argument('-t', '--test',
-                        default='model/DQN/feature_eval_0.01_{}_{}.pkl'.format(E_GREEDY, BATCH_SIZE),
+                        default='model/DQN/mix_eval_0.01_{}_{}.pkl'.format(E_GREEDY, BATCH_SIZE),
                         help='The test model path')
     args = parse.parse_args()
     
@@ -95,13 +91,14 @@ if __name__ == "__main__":
         from brain.pbrain import DQN
     
     # game setup
-    AGENT = 'Davis'
+    AGENT = 'Firen'
     OPPOENENT = 'Dennis'
 
     # env setup
     env = lf2gym.make(startServer=True, wrap='skip4', driverType=lf2gym.WebDriver.PhantomJS, 
         characters=[lf2gym.Character[AGENT], lf2gym.Character[OPPOENENT]], 
-        difficulty=lf2gym.Difficulty.Crusher, debug=True)
+        difficulty=lf2gym.Difficulty.Crusher, debug=True,
+        action_options=['Basic', 'AJD'])
     
     options = env.get_reset_options()
     print('Original reset options: %s' % options)
