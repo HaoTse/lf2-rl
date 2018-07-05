@@ -20,25 +20,48 @@ bash setup.sh
 ```
 > If you receive a premissions error, you should use `chmod` command to change the premission of the diver you use in `lf2gym/webdriver/*`.
 
-### Result
-- Davis
+## Model
 
-Picture mode
+1. CNN
+
+![image](https://github.com/HaoTse/lf2-rl/blob/master/img/cnn.png)
+
+2. Concat features to Linear layer
+
+![image](https://github.com/HaoTse/lf2-rl/blob/master/img/linear.png)
+
+## Result
+### Davis
+
+- Picture mode
 ![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_davis_picture_test.gif)
 
-Feature mode
+- Feature mode
 ![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_davis_feature_test.gif)
 
-Mix mode    
+- Mix mode
 ![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_davis_mix_test.gif)
 
-- Firen
+### Firen
 
-Picture mode
+- Picture mode
 ![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_firen_picture_test.gif)
 
-Feature mode
+- Feature mode
 ![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_firen_feature_test.gif)
 
-Mix mode    
+- Mix mode
 ![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_firen_mix_test.gif)
+
+### learning curve
+
+- steps
+
+![image](https://github.com/HaoTse/lf2-rl/blob/master/img/step.png)
+
+- rewards
+
+![image](https://github.com/HaoTse/lf2-rl/blob/master/img/reward.png)
+
+## Analysis
+> See `report.pdf`.
