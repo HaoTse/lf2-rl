@@ -19,3 +19,26 @@ pip install -r requirements.txt
 bash setup.sh
 ```
 > If you receive a premissions error, you should use `chmod` command to change the premission of the diver you use in `lf2gym/webdriver/*`.
+
+### Result
+- Davis
+
+Picture mode
+![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_davis_picture_test.gif)
+
+Feature mode
+![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_davis_feature_test.gif)
+
+Mix mode    
+![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_davis_mix_test.gif)
+
+- Firen
+
+Picture mode
+![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_firen_picture_test.gif)
+
+Feature mode
+![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_firen_feature_test.gif)
+
+Mix mode    
+![image](https://github.com/HaoTse/lf2-rl/blob/master/gif/new_firen_mix_test.gif)
